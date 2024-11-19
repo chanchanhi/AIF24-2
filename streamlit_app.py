@@ -23,7 +23,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 고정된 프롬프트를 이용한 번역 기능
 def translate_text_with_prompt(selected_text):
     # 사용자 지정 프롬프트
     prompt = f"""
@@ -50,20 +49,16 @@ def translate_text_with_prompt(selected_text):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4o", # gpt-4o
+            model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
-        answer = response.choices[0].message['content'].strip()
-        # keywords = re.findall(r'\*\*(.*?)\*\*', answer)
-                
-        return answer
+        return response.choices[0].message['content'].strip()
     except Exception as e:
         print("OpenAI API error:", e)
         return "Translation failed"
 
 
-# 재번역 기능 추가
 def retranslate_text_with_prompt(word):
     prompt = f"""
     입력된 단어: '{word}'
@@ -98,14 +93,9 @@ async def translate(request: Request):
 
 @app.post("/retranslate")
 async def retranslate(request: Request):
-    # 요청 데이터 추출
     data = await request.json()
     word = data.get("word", "")  # 요청에서 'word' 추출
-
-    # 재번역 로직 수행
     retranslated_word = retranslate_text_with_prompt(word)
-
-    # 결과 반환
     return {"retranslated_word": retranslated_word}
 
 
