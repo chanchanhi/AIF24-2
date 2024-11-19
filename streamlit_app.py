@@ -45,13 +45,12 @@ def translate_text_with_prompt(selected_text):
         유의 사항: 
         - 모두가 알 만한 쉬운 한자어는 번역 대상에서 제외
         - 신조어 번역 전 최대한 신뢰할 수 있는 정보를 주기 위해 무조건 인터넷 검색을 먼저 수행 후, 해당 자료 기반으로 번역 수행. 알고 있는 신조어여도 인터넷 검색을 통해 신조어의 의미 파악.
-        - 제시한 출력 형태 이외의 문장을 출력하지 않아야 함. 중괄호는 제외.        
-        `;
+        - 제시한 출력 형태 이외의 문장을 출력하지 않아야 함. 중괄호는 제외.
     """
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o", # gpt-4o
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
@@ -78,7 +77,7 @@ def retranslate_text_with_prompt(word):
     """
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
