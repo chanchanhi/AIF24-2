@@ -56,12 +56,38 @@ def translate_text_with_prompt(selected_text):
             max_tokens=1000
         )
         answer = response.choices[0].message['content'].strip()
-        keywords = re.findall(r'\*\*(.*?)\*\*', answer)
+        # keywords = re.findall(r'\*\*(.*?)\*\*', answer)
                 
         return answer
     except Exception as e:
         print("OpenAI API error:", e)
         return "Translation failed"
+
+
+# 재번역 기능 추가
+def retranslate_text_with_prompt(word):
+    prompt = f"""
+    입력된 단어: '{word}'
+
+    업무: 
+    1. 주어진 단어를 해석하고 쉬운 표현으로 번역.
+    2. 필요한 경우 의미를 보충하거나 명확히 표현.
+    3. 단일 단어의 경우 짧고 명확한 문장으로 변환.
+
+    출력: 번역된 단어 또는 표현만을 출력.
+    """
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1000
+        )
+        retranslated_word = response.choices[0].message['content'].strip()
+        return retranslated_word
+    except Exception as e:
+        print("OpenAI API error:", e)
+        return "Retranslation failed"
+
 
 # FastAPI 엔드포인트 정의
 @app.post("/translate")
