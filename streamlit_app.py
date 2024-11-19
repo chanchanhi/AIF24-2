@@ -97,6 +97,19 @@ async def translate(request: Request):
     translated_text = translate_text_with_prompt(text)
     return {"translated_text": translated_text}
 
+@app.post("/retranslate")
+async def retranslate(request: Request):
+    # 요청 데이터 추출
+    data = await request.json()
+    word = data.get("word", "")  # 요청에서 'word' 추출
+
+    # 재번역 로직 수행
+    retranslated_word = retranslate_text_with_prompt(word)
+
+    # 결과 반환
+    return {"retranslated_word": retranslated_word}
+
+
 # Streamlit 앱 설정
 def main():
     st.title("Translation API (with FastAPI)")
