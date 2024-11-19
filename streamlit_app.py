@@ -51,7 +51,7 @@ def translate_text_with_prompt(selected_text):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o", # gpt-4o
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
@@ -78,7 +78,7 @@ def retranslate_text_with_prompt(word):
     """
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o", # gpt-4o
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
