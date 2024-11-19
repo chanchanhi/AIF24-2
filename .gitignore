@@ -1,1 +1,15 @@
+# 환경 설정 파일
 .env
+
+# Python 관련 불필요 파일
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Streamlit 캐시 파일
+.streamlit/
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
