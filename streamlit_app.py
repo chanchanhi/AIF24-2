@@ -4,6 +4,7 @@ import openai
 from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+import re
 
 # .env 파일 로드
 load_dotenv()
@@ -54,7 +55,10 @@ def translate_text_with_prompt(selected_text):
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
-        return response.choices[0].message['content'].strip()
+        answer = response.choices[0].message['content'].strip()
+        keywords = re.findall(r'\*\*(.*?)\*\*', answer)
+                
+        return answer
     except Exception as e:
         print("OpenAI API error:", e)
         return "Translation failed"
