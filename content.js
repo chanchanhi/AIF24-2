@@ -163,11 +163,27 @@ function displayInSidePanel(translatedText, originalText) {
 
 // 재번역 결과 표시 함수
 function displayRetranslation(keywordElement, retranslatedWord) {
+  // 부모 요소 찾기
+  const parentElement = keywordElement.parentElement;
+
+  // 기존에 재번역 결과가 이미 표시되어 있다면 제거
+  const existingResult = parentElement.nextElementSibling;
+  if (existingResult && existingResult.classList.contains("retranslation-result")) {
+      existingResult.remove();
+  }
+
   const retranslationResult = document.createElement("div");
+  retranslationResult.className = "retranslation-result"; // 클래스 추가
   retranslationResult.style.marginTop = "5px";
+  retranslationResult.style.padding = "5px 10px";
   retranslationResult.style.color = "#333";
   retranslationResult.style.fontSize = "14px";
-  retranslationResult.textContent = `재번역: ${retranslatedWord}`;
-  keywordElement.parentElement.appendChild(retranslationResult);
+  retranslationResult.style.fontStyle = "italic";
+  retranslationResult.style.borderLeft = "4px solid #007bff";
+  retranslationResult.style.backgroundColor = "#f9f9f9";
+  retranslationResult.textContent = `${retranslatedWord}`;
+
+  // 재번역 결과를 "단어와 버튼" 행 바로 아래에 추가
+  parentElement.parentElement.insertBefore(retranslationResult, parentElement.nextSibling);
 }
 
