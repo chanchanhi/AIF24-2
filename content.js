@@ -1,5 +1,6 @@
 // 메시지 리스너: 스크립트 간 메시지 교환을 위해 사용하는 크롬 API
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
   if (request.action === 'translateSelection') {
       let selectedText = window.getSelection().toString();
 
@@ -159,10 +160,12 @@ function displayInSidePanel(translatedText, originalText) {
 
   // 문서에 사이드 패널 추가
   document.body.appendChild(panel);
+
 }
 
 // 재번역 결과 표시 함수
 function displayRetranslation(keywordElement, retranslatedWord) {
+
   // 부모 요소 찾기
   const parentElement = keywordElement.parentElement;
 
