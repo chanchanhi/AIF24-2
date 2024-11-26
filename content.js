@@ -56,6 +56,34 @@ function displayInSidePanel(translatedText, originalText) {
   panel.style.overflowY = "auto";
   panel.style.zIndex = "10000";
 
+    // 제목 추가
+    const titleContainer = document.createElement("div");
+    titleContainer.className = "six";
+    titleContainer.style.textAlign = "center";
+    titleContainer.style.marginBottom = "20px";
+
+    const title = document.createElement("h1");
+    title.style.color = "#c50000";
+    title.style.fontSize = "24px";
+    title.style.textTransform = "uppercase";
+    title.style.wordSpacing = "1px";
+    title.style.letterSpacing = "2px";
+    title.style.position = "relative";
+    title.textContent = "ExplainEasy";
+
+    const subtitle = document.createElement("span");
+    subtitle.style.lineHeight = "2em";
+    subtitle.style.paddingBottom = "15px";
+    subtitle.style.textTransform = "none";
+    subtitle.style.fontSize = "0.8em";
+    subtitle.style.fontWeight = "normal";
+    subtitle.style.fontStyle = "italic";
+    subtitle.style.color = "#999";
+    subtitle.textContent = "신조어, 한자어, 전문 용어 해설 도구";
+
+    title.appendChild(subtitle);
+    titleContainer.appendChild(title);
+
   // 원문 표시
   const originalTitle = document.createElement("h2");
   originalTitle.textContent = "번역 원문";
@@ -68,9 +96,9 @@ function displayInSidePanel(translatedText, originalText) {
   originalParagraph.style.marginBottom = "20px";
 
   // 번역 결과 제목 추가
-  const title = document.createElement("h2");
-  title.textContent = "번역 결과";
-  title.style.marginBottom = "10px";
+  const resutlTitle = document.createElement("h2");
+  resutlTitle.textContent = "번역 결과";
+  resutlTitle.style.marginBottom = "10px";
 
   // 번역된 텍스트 표시
   const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -152,9 +180,10 @@ function displayInSidePanel(translatedText, originalText) {
 
   // 사이드 패널에 요소 추가
   panel.appendChild(closeButton);
+  panel.appendChild(titleContainer); // 제목 추가
   panel.appendChild(originalTitle);
   panel.appendChild(originalParagraph);
-  panel.appendChild(title);
+  panel.appendChild(resultTitle);
   panel.appendChild(result);
   panel.appendChild(keywordList);
 

@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>번역 플러그인</title>
+  <title>ExplainEasy</title>
   <style>
     body {
       background: #e0e5ec;
@@ -16,14 +16,58 @@
       text-align: center;
     }
 
-    h1 {
-      position: relative;
+    .six h1 {
       text-align: center;
-      color: #353535;
-      font-size: 36px;
+      color: #222;
+      font-size: 30px;
+      font-weight: 400;
+      text-transform: uppercase;
+      word-spacing: 1px;
+      letter-spacing: 2px;
+      color: #c50000;
+      position: relative; /* :before, :after 위치 조정용 */
       margin-bottom: 20px;
-      font-family: 'Noto Sans', sans-serif;
-      white-space: nowrap;
+    }
+
+    .six h1 span {
+      line-height: 2em;
+      padding-bottom: 15px;
+      text-transform: none;
+      font-size: 0.7em;
+      font-weight: normal;
+      font-style: italic;
+      font-family: "Playfair Display", "Bookman", serif;
+      color: #999;
+      letter-spacing: -0.005em;
+      word-spacing: 1px;
+      display: block;
+    }
+
+    .six h1:after, .six h1:before {
+      position: absolute;
+      left: 0;
+      bottom: -10px; /* 라인의 위치 조정 */
+      width: 45px;
+      height: 4px;
+      content: "";
+      background-color: #ccc;
+      right: 45px;
+      margin: auto;
+    }
+
+    .six h1:before {
+      background-color: #d78b8b;
+      left: 45px;
+      width: 90px;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
     }
 
     .btn-6 {
@@ -55,82 +99,21 @@
       color: white;
       transition: all 500ms ease;
     }
-
-    .btn-6:before,
-    .btn-6:after {
-      position: absolute;
-      content: "";
-      height: 0%;
-      width: 1px;
-      box-shadow: -1px -1px 20px rgba(255, 255, 255, 1),
-                  -4px -4px 5px rgba(255, 255, 255, 1),
-                  7px 7px 20px rgba(0, 0, 0, 0.4),
-                  4px 4px 5px rgba(0, 0, 0, 0.3);
-      transition: all 500ms ease;
-    }
-
-    .btn-6:before {
-      right: 0;
-      top: 0;
-    }
-
-    .btn-6:after {
-      left: 0;
-      bottom: 0;
-    }
-
-    .btn-6:hover {
-      background: transparent;
-      color: #76aef1;
-      box-shadow: none;
-    }
-
-    .btn-6:hover:before {
-      height: 100%;
-    }
-
-    .btn-6:hover:after {
-      height: 100%;
-    }
-
-    .btn-6 span:before,
-    .btn-6 span:after {
-      position: absolute;
-      content: "";
-      box-shadow: -1px -1px 20px rgba(255, 255, 255, 1),
-                  -4px -4px 5px rgba(255, 255, 255, 1),
-                  7px 7px 20px rgba(0, 0, 0, 0.4),
-                  4px 4px 5px rgba(0, 0, 0, 0.3);
-      transition: all 500ms ease;
-    }
-
-    .btn-6 span:before {
-      left: 0;
-      top: 0;
-      width: 0%;
-      height: 0.5px;
-    }
-
-    .btn-6 span:after {
-      right: 0;
-      bottom: 0;
-      width: 0%;
-      height: 0.5px;
-    }
-
-    .btn-6 span:hover:before {
-      width: 100%;
-    }
-
-    .btn-6 span:hover:after {
-      width: 100%;
-    }
   </style>
 </head>
 <body>
-  <h1>번역 플러그인</h1>
-  <button class="btn-6" id="translatePageButton">
-    <span>페이지 번역</span>
+  <div class="six">
+    <h1>ExplainEasy
+      <span>신조어, 한자어, 전문 용어 해설 도구</span>
+    </h1>
+  </div>
+
+  <!-- 텍스트 입력 필드 -->
+  <input type="text" id="textInput" placeholder="번역할 텍스트를 입력하세요">
+
+  <!-- 해설 보기 버튼 -->
+  <button class="btn-6" id="explainButton">
+    <span>해설 보기</span>
   </button>
 
   <script src="popup.js"></script>
