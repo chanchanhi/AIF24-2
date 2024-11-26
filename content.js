@@ -85,7 +85,7 @@ function displayInSidePanel(translatedText, originalText) {
     subtitle.style.lineHeight = "2em";
     subtitle.style.paddingBottom = "15px";
     subtitle.style.textTransform = "none";
-    subtitle.style.fontSize = "0.8em";
+    subtitle.style.fontSize = "0.7em";
     subtitle.style.fontWeight = "normal";
     subtitle.style.fontStyle = "italic";
     subtitle.style.color = "#999";
