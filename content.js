@@ -89,6 +89,7 @@ function displayInSidePanel(translatedText, originalText) {
     subtitle.style.fontWeight = "normal";
     subtitle.style.fontStyle = "italic";
     subtitle.style.color = "#999";
+    subtitle.style.whiteSpace = "nowrap"; // 줄바꿈 방지
     subtitle.textContent = "신조어, 한자어, 전문 용어 해설 도구";
 
     title.appendChild(subtitle);
