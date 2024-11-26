@@ -44,20 +44,31 @@ def translate_text_with_prompt(selected_text):
         유의 사항: 
         - 모두가 알 만한 쉬운 한자어는 번역 대상에서 제외
         - 신조어 번역 전 최대한 신뢰할 수 있는 정보를 주기 위해 무조건 인터넷 검색을 먼저 수행 후, 해당 자료 기반으로 번역 수행. 알고 있는 신조어여도 인터넷 검색을 통해 신조어의 의미 파악.
-        - 제시한 출력 형태 이외의 문장을 출력하지 않아야 함. 중괄호는 제외.
+
+        - 제시한 출력 형태 이외의 문장을 출력하지 않아야 함. 중괄호는 제외.        
+        `;
+
     """
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4o",
+
+            model="gpt-4o", # gpt-4o
+
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
-        return response.choices[0].message['content'].strip()
+        answer = response.choices[0].message['content'].strip()
+        # keywords = re.findall(r'\*\*(.*?)\*\*', answer)
+                
+        return answer
     except Exception as e:
         print("OpenAI API error:", e)
         return "Translation failed"
 
+
+
+# 재번역 기능 추가
 
 def retranslate_text_with_prompt(word):
     prompt = f"""
@@ -72,7 +83,9 @@ def retranslate_text_with_prompt(word):
     """
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4o",
+
+            model="gpt-4o", # gpt-4o
+
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
@@ -93,9 +106,16 @@ async def translate(request: Request):
 
 @app.post("/retranslate")
 async def retranslate(request: Request):
+
+    # 요청 데이터 추출
     data = await request.json()
     word = data.get("word", "")  # 요청에서 'word' 추출
+
+    # 재번역 로직 수행
     retranslated_word = retranslate_text_with_prompt(word)
+
+    # 결과 반환
+
     return {"retranslated_word": retranslated_word}
 
 
