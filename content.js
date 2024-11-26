@@ -32,6 +32,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: true });
       return true;
   }
+    // 추가된 메시지 리스너: 팝업에서 보낸 메시지 처리
+    if (request.action === "displayInSidePanel") {
+    const { originalText, translatedText } = request;
+
+    // 사이드 패널 표시 함수 호출
+    displayInSidePanel(translatedText, originalText);
+
+    sendResponse({ success: true });
+    return true;
+    }
 });
 
 // 사이드 패널 생성 및 결과 표시 함수
