@@ -107,9 +107,9 @@ function displayInSidePanel(translatedText, originalText) {
   originalParagraph.style.marginBottom = "20px";
 
   // 번역 결과 제목 추가
-  const resutlTitle = document.createElement("h2");
-  resutlTitle.textContent = "번역 결과";
-  resutlTitle.style.marginBottom = "10px";
+  const resultTitle = document.createElement("h2");
+  resultTitle.textContent = "번역 결과";
+  resultTitle.style.marginBottom = "10px";
 
   // 번역된 텍스트 표시
   const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
