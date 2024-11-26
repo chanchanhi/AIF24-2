@@ -23,7 +23,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 고정된 프롬프트를 이용한 번역 기능
 def translate_text_with_prompt(selected_text):
     # 사용자 지정 프롬프트
     prompt = f"""
@@ -45,13 +44,17 @@ def translate_text_with_prompt(selected_text):
         유의 사항: 
         - 모두가 알 만한 쉬운 한자어는 번역 대상에서 제외
         - 신조어 번역 전 최대한 신뢰할 수 있는 정보를 주기 위해 무조건 인터넷 검색을 먼저 수행 후, 해당 자료 기반으로 번역 수행. 알고 있는 신조어여도 인터넷 검색을 통해 신조어의 의미 파악.
+
         - 제시한 출력 형태 이외의 문장을 출력하지 않아야 함. 중괄호는 제외.        
         `;
+
     """
 
     try:
         response = openai.ChatCompletion.create(
+
             model="gpt-4o", # gpt-4o
+
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
@@ -64,7 +67,9 @@ def translate_text_with_prompt(selected_text):
         return "Translation failed"
 
 
+
 # 재번역 기능 추가
+
 def retranslate_text_with_prompt(word):
     prompt = f"""
     입력된 단어: '{word}'
@@ -78,7 +83,9 @@ def retranslate_text_with_prompt(word):
     """
     try:
         response = openai.ChatCompletion.create(
+
             model="gpt-4o", # gpt-4o
+
             messages=[{"role": "user", "content": prompt}],
             max_tokens=1000
         )
@@ -99,6 +106,7 @@ async def translate(request: Request):
 
 @app.post("/retranslate")
 async def retranslate(request: Request):
+
     # 요청 데이터 추출
     data = await request.json()
     word = data.get("word", "")  # 요청에서 'word' 추출
@@ -107,6 +115,7 @@ async def retranslate(request: Request):
     retranslated_word = retranslate_text_with_prompt(word)
 
     # 결과 반환
+
     return {"retranslated_word": retranslated_word}
 
 
@@ -114,6 +123,42 @@ async def retranslate(request: Request):
 def main():
     st.title("Translation API (with FastAPI)")
     st.write("POST 요청을 통해 고정된 프롬프트로 번역된 텍스트가 반환됩니다.")
+
+    st.write("번역 결과를 확인하고 클립보드로 복사할 수 있습니다.")
+
+    # 번역 원문 입력
+    original_text = st.text_area("번역 원문", placeholder="번역할 문장을 입력하세요.")
+
+    # 번역 요청
+    if st.button("번역하기"):
+        if original_text:
+            translated_text = translate_text_with_prompt(original_text)
+
+            # 번역 결과와 복사 버튼 표시
+            st.markdown(
+                f"""
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="margin: 0;">번역 결과</h3>
+                    <button onclick="copyToClipboard()" style="padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        복사하기
+                    </button>
+                </div>
+                <script>
+                function copyToClipboard() {{
+                    navigator.clipboard.writeText(`{translated_text}`);
+                    alert("번역 결과가 클립보드에 복사되었습니다!");
+                }}
+                </script>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            st.text_area("번역 결과", value=translated_text, height=150)
+        else:
+            st.error("번역할 문장을 입력하세요.")
+
+
+
 
 if __name__ == "__main__":
     main()

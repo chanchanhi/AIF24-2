@@ -1,5 +1,6 @@
 // 메시지 리스너: 스크립트 간 메시지 교환을 위해 사용하는 크롬 API
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
   if (request.action === 'translateSelection') {
       let selectedText = window.getSelection().toString();
 
@@ -66,10 +67,38 @@ function displayInSidePanel(translatedText, originalText) {
   originalParagraph.style.whiteSpace = "pre-wrap";
   originalParagraph.style.marginBottom = "20px";
 
+  // 번역 결과 제목과 복사 버튼
+  const titleContainer = document.createElement("div");
+  titleContainer.style.cssText = `
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  `;
+
   // 번역 결과 제목 추가
   const title = document.createElement("h2");
   title.textContent = "번역 결과";
   title.style.marginBottom = "10px";
+
+  const copyButton = document.createElement("button");
+  copyButton.textContent = "복사하기";
+  copyButton.style.cssText = `
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  copyButton.addEventListener("click", () => {
+      navigator.clipboard.writeText(translatedText).then(() => {
+          alert("번역 결과가 클립보드에 복사되었습니다!");
+      });
+  });
+
+  titleContainer.appendChild(title);
+  titleContainer.appendChild(copyButton);
 
   // 번역된 텍스트 표시
   const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -153,16 +182,21 @@ function displayInSidePanel(translatedText, originalText) {
   panel.appendChild(closeButton);
   panel.appendChild(originalTitle);
   panel.appendChild(originalParagraph);
-  panel.appendChild(title);
+  panel.appendChild(titleContainer);
+  panel.appendChild(result);
+  //panel.appendChild(title);
   panel.appendChild(result);
   panel.appendChild(keywordList);
 
+
   // 문서에 사이드 패널 추가
   document.body.appendChild(panel);
+
 }
 
 // 재번역 결과 표시 함수
 function displayRetranslation(keywordElement, retranslatedWord) {
+
   // 부모 요소 찾기
   const parentElement = keywordElement.parentElement;
 
