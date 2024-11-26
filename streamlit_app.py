@@ -124,5 +124,41 @@ def main():
     st.title("Translation API (with FastAPI)")
     st.write("POST 요청을 통해 고정된 프롬프트로 번역된 텍스트가 반환됩니다.")
 
+    st.write("번역 결과를 확인하고 클립보드로 복사할 수 있습니다.")
+
+    # 번역 원문 입력
+    original_text = st.text_area("번역 원문", placeholder="번역할 문장을 입력하세요.")
+
+    # 번역 요청
+    if st.button("번역하기"):
+        if original_text:
+            translated_text = translate_text_with_prompt(original_text)
+
+            # 번역 결과와 복사 버튼 표시
+            st.markdown(
+                f"""
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="margin: 0;">번역 결과</h3>
+                    <button onclick="copyToClipboard()" style="padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        복사하기
+                    </button>
+                </div>
+                <script>
+                function copyToClipboard() {{
+                    navigator.clipboard.writeText(`{translated_text}`);
+                    alert("번역 결과가 클립보드에 복사되었습니다!");
+                }}
+                </script>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            st.text_area("번역 결과", value=translated_text, height=150)
+        else:
+            st.error("번역할 문장을 입력하세요.")
+
+
+
+
 if __name__ == "__main__":
     main()
