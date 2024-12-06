@@ -67,7 +67,7 @@ function displayInSidePanel(translatedText, originalText) {
   originalParagraph.style.whiteSpace = "pre-wrap";
   originalParagraph.style.marginBottom = "20px";
 
-  // 번역 결과 제목과 복사 버튼
+  // 번역 결과 제목, 복사 버튼, 저장 버튼
   const titleContainer = document.createElement("div");
   titleContainer.style.cssText = `
     display: flex;
@@ -96,15 +96,32 @@ function displayInSidePanel(translatedText, originalText) {
           alert("번역 결과가 클립보드에 복사되었습니다!");
       });
   });
+  //저장하기
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "저장하기";
+  saveButton.style.cssText = `
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  saveButton.addEventListener("click", () => {
+      saveToLocalStorage(originalText, translatedText);
+      alert("번역 원문과 결과가 저장되었습니다!");
+  });
 
   titleContainer.appendChild(title);
   titleContainer.appendChild(copyButton);
+  titleContainer.appendChild(saveButton);//저장하기
 
   // 번역된 텍스트 표시
   const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
   const result = document.createElement("p");
   result.innerHTML = formattedText;
   result.style.whiteSpace = "pre-wrap";
+  result.style.marginBottom = "20px";
 
   // 키워드 추출
   const keywords = [...translatedText.matchAll(/\*\*(.*?)\*\*/g)].map(match => match[1]);
@@ -220,4 +237,3 @@ function displayRetranslation(keywordElement, retranslatedWord) {
   // 재번역 결과를 "단어와 버튼" 행 바로 아래에 추가
   parentElement.parentElement.insertBefore(retranslationResult, parentElement.nextSibling);
 }
-
