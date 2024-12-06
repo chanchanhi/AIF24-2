@@ -67,7 +67,7 @@ function displayInSidePanel(translatedText, originalText) {
   originalParagraph.style.whiteSpace = "pre-wrap";
   originalParagraph.style.marginBottom = "20px";
 
-  // 번역 결과 제목과 복사 버튼
+  // 번역 결과 제목, 복사 버튼, 저장 버튼
   const titleContainer = document.createElement("div");
   titleContainer.style.cssText = `
     display: flex;
@@ -96,15 +96,33 @@ function displayInSidePanel(translatedText, originalText) {
           alert("번역 결과가 클립보드에 복사되었습니다!");
       });
   });
+  //저장하기
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "저장하기";
+  saveButton.style.cssText = `
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  saveButton.addEventListener("click", () => {
+      saveToLocalStorage(originalText, translatedText);//로컬 스토리지 저장
+      alert("번역 원문과 결과가 저장되었습니다!");
+      //displaySavedTranslations();//테이블 업데이트(삭제하기)
+  });
 
   titleContainer.appendChild(title);
   titleContainer.appendChild(copyButton);
+  titleContainer.appendChild(saveButton);//저장하기
 
   // 번역된 텍스트 표시
   const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
   const result = document.createElement("p");
   result.innerHTML = formattedText;
   result.style.whiteSpace = "pre-wrap";
+  result.style.marginBottom = "20px";
 
   // 키워드 추출
   const keywords = [...translatedText.matchAll(/\*\*(.*?)\*\*/g)].map(match => match[1]);
@@ -187,10 +205,14 @@ function displayInSidePanel(translatedText, originalText) {
   //panel.appendChild(title);
   panel.appendChild(result);
   panel.appendChild(keywordList);
+  panel.appendChild(saveButton); //저장버튼
+
+  displaySavedTranslationsInSidePanel(panel);
 
 
   // 문서에 사이드 패널 추가
   document.body.appendChild(panel);
+
 
 }
 
@@ -220,4 +242,93 @@ function displayRetranslation(keywordElement, retranslatedWord) {
   // 재번역 결과를 "단어와 버튼" 행 바로 아래에 추가
   parentElement.parentElement.insertBefore(retranslationResult, parentElement.nextSibling);
 }
+
+// 로컬 스토리지에 번역 데이터 저장
+function saveToLocalStorage(originalText, translatedText) {
+  const storedTranslations = JSON.parse(localStorage.getItem("translations")) || {};
+  storedTranslations[originalText] = translatedText;
+  localStorage.setItem("translations", JSON.stringify(storedTranslations));
+}
+
+// 저장된 번역 데이터를 "저장된 번역 관리" 섹션으로 표시
+function displaySavedTranslationsInSidePanel(panel) {
+  // 기존 "저장된 번역 관리" 섹션 제거
+  const existingSection = document.getElementById("savedTranslationsSection");
+  if (existingSection) {
+      existingSection.remove();
+  }
+
+  // 새 컨테이너 생성
+  const savedTranslationsSection = document.createElement("div");
+  savedTranslationsSection.id = "savedTranslationsSection";
+  savedTranslationsSection.style.marginTop = "20px";
+
+  const title = document.createElement("h3");
+  title.textContent = "저장된 번역 관리";
+  savedTranslationsSection.appendChild(title);
+
+  // 저장된 번역 데이터를 테이블 형식으로 표시
+  const storedTranslations = JSON.parse(localStorage.getItem("translations")) || {};
+  if (Object.keys(storedTranslations).length === 0) {
+      const noDataMessage = document.createElement("p");
+      noDataMessage.textContent = "저장된 번역이 없습니다.";
+      noDataMessage.style.color = "#666";
+      savedTranslationsSection.appendChild(noDataMessage);
+  } else {
+      const table = document.createElement("table");
+      table.style.cssText = `
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 10px;
+      `;
+
+      const headerRow = document.createElement("tr");
+      ["번역 원문", "번역 결과"].forEach(headerText => {
+          const th = document.createElement("th");
+          th.textContent = headerText;
+          th.style.cssText = `
+              padding: 5px;
+              border: 1px solid #ddd;
+              background-color: #f1f1f1;
+          `;
+          headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      Object.entries(storedTranslations).forEach(([originalText, translatedText]) => {
+          const row = document.createElement("tr");
+
+          const originalCell = document.createElement("td");
+          originalCell.textContent = originalText;
+          originalCell.style.cssText = `
+              padding: 5px;
+              border: 1px solid #ddd;
+          `;
+
+          const translatedCell = document.createElement("td");
+          translatedCell.textContent = translatedText;
+          translatedCell.style.cssText = `
+              padding: 5px;
+              border: 1px solid #ddd;
+          `;
+
+          row.appendChild(originalCell);
+          row.appendChild(translatedCell);
+          table.appendChild(row);
+      });
+
+      savedTranslationsSection.appendChild(table);
+  }
+
+  // 기존 패널에 추가
+  panel.appendChild(savedTranslationsSection);
+}
+
+// 초기화: 페이지 로드 시 저장된 번역 UI 표시
+function initialize() {
+  displaySavedTranslations();
+}
+
+// 페이지 로드 시 초기화
+window.onload = initialize;
 
