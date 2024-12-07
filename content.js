@@ -58,6 +58,25 @@ function displayInSidePanel(translatedText, originalText) {
   panel.style.resize = "horizontal";//추가
   panel.style.overflow = "hidden";//추가
 
+  // 닫기 버튼 추가
+  const closeButton = document.createElement("button");
+  closeButton.textContent = "닫기";
+  closeButton.style.position = "absolute";
+  closeButton.style.top = "10px";
+  closeButton.style.right = "10px";
+  closeButton.style.padding = "5px 10px";
+  closeButton.style.border = "none";
+  closeButton.style.borderRadius = "5px";
+  closeButton.style.backgroundColor = "#ff5c5c";
+  closeButton.style.color = "#fff";
+  closeButton.style.cursor = "pointer";
+
+  closeButton.addEventListener("click", () => {
+      panel.remove();
+  });
+
+  panel.appendChild(closeButton);
+
    // 드래그 핸들 추가
    const resizeHandle = document.createElement("div");
    resizeHandle.style.cssText = `
@@ -94,6 +113,8 @@ function displayInSidePanel(translatedText, originalText) {
            document.body.style.cursor = "default";
        }
    });
+
+  panel.appendChild(resizeHandle);
 
   // 원문 표시
   const originalTitle = document.createElement("h2");
@@ -162,6 +183,7 @@ function displayInSidePanel(translatedText, originalText) {
   result.innerHTML = formattedText;
   result.style.whiteSpace = "pre-wrap";
   result.style.marginBottom = "20px";
+  
 
   // 키워드 추출
   const keywords = [...translatedText.matchAll(/\*\*(.*?)\*\*/g)].map(match => match[1]);
@@ -218,31 +240,12 @@ function displayInSidePanel(translatedText, originalText) {
       keywordList.appendChild(keywordRow);
   });
 
-  // 닫기 버튼 추가
-  const closeButton = document.createElement("button");
-  closeButton.textContent = "닫기";
-  closeButton.style.position = "absolute";
-  closeButton.style.top = "10px";
-  closeButton.style.right = "10px";
-  closeButton.style.padding = "5px 10px";
-  closeButton.style.border = "none";
-  closeButton.style.borderRadius = "5px";
-  closeButton.style.backgroundColor = "#ff5c5c";
-  closeButton.style.color = "#fff";
-  closeButton.style.cursor = "pointer";
-
-  closeButton.addEventListener("click", () => {
-      panel.remove();
-  });
-
   // 사이드 패널에 요소 추가
-  panel.appendChild(resizeHandle);//드래그 핸들 추가
-  panel.appendChild(closeButton);
+  //panel.appendChild(resizeHandle);//드래그 핸들 추가
+  //panel.appendChild(closeButton);
   panel.appendChild(originalTitle);
   panel.appendChild(originalParagraph);
   panel.appendChild(titleContainer);
-  panel.appendChild(result);
-  //panel.appendChild(title);
   panel.appendChild(result);
   panel.appendChild(keywordList);
   panel.appendChild(saveButton); //저장버튼
