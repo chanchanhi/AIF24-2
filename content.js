@@ -55,6 +55,45 @@ function displayInSidePanel(translatedText, originalText) {
   panel.style.padding = "20px";
   panel.style.overflowY = "auto";
   panel.style.zIndex = "10000";
+  panel.style.resize = "horizontal";//추가
+  panel.style.overflow = "hidden";//추가
+
+   // 드래그 핸들 추가
+   const resizeHandle = document.createElement("div");
+   resizeHandle.style.cssText = `
+       position: absolute;
+       top: 0;
+       left: -5px;
+       width: 10px;
+       height: 100%;
+       cursor: ew-resize;
+       z-index: 10001;
+       background-color: transparent;
+   `;
+
+   // 드래그 이벤트 추가
+   let isResizing = false;
+
+   resizeHandle.addEventListener("mousedown", (e) => {
+       isResizing = true;
+       document.body.style.cursor = "ew-resize";
+   });
+
+   document.addEventListener("mousemove", (e) => {
+       if (isResizing) {
+           const newWidth = window.innerWidth - e.clientX;
+           if (newWidth > 200 && newWidth < 600) { // 최소, 최대 폭 설정
+               panel.style.width = `${newWidth}px`;
+           }
+       }
+   });
+
+   document.addEventListener("mouseup", () => {
+       if (isResizing) {
+           isResizing = false;
+           document.body.style.cursor = "default";
+       }
+   });
 
   // 원문 표시
   const originalTitle = document.createElement("h2");
@@ -197,6 +236,7 @@ function displayInSidePanel(translatedText, originalText) {
   });
 
   // 사이드 패널에 요소 추가
+  panel.appendChild(resizeHandle);//드래그 핸들 추가
   panel.appendChild(closeButton);
   panel.appendChild(originalTitle);
   panel.appendChild(originalParagraph);
