@@ -61,7 +61,7 @@ def translate_text_with_prompt(selected_text):
         return answer
     except Exception as e:
         print("OpenAI API error:", e)
-        return "Translation failed"
+        return "Translation failed: OpenAI API ERROR"
 
 
 
@@ -90,7 +90,7 @@ def retranslate_text_with_prompt(word):
         return retranslated_word
     except Exception as e:
         print("OpenAI API error:", e)
-        return "Retranslation failed"
+        return "Retranslation failed: OpenAI API ERROR"
 
 
 # FastAPI 엔드포인트 정의
