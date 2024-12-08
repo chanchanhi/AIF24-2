@@ -1,71 +1,67 @@
 // 메시지 리스너: 스크립트 간 메시지 교환을 위해 사용하는 크롬 API
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "translateSelection") {
+        let selectedText = window.getSelection().toString();
 
-  if (request.action === 'translateSelection') {
-      let selectedText = window.getSelection().toString();
+        // 선택된 텍스트가 없는 경우
+        if (!selectedText) {
+            alert("먼저 번역할 텍스트를 선택하세요.");
+            sendResponse({ success: false });
+            return;
+        }
 
-      // 선택된 텍스트가 없는 경우
-      if (!selectedText) {
-          alert("먼저 번역할 텍스트를 선택하세요.");
-          sendResponse({ success: false });
-          return;
-      }
+        // 번역 요청
+        fetch("http://127.0.0.1:8000/translate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: selectedText }),
+        })
+            .then((response) => response.json()) // JSON 데이터를 js 객체로 변환
+            .then((data) => {
+                let translatedText = data.translated_text;
+                displayInSidePanel(translatedText, selectedText);
+            })
+            .catch((error) => {
+                console.error("Translation failed:", error);
+                displayInSidePanel("번역 중 오류가 발생했습니다.");
+            });
 
-      // 번역 요청
-      fetch('http://127.0.0.1:8000/translate', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ text: selectedText })
-      })
-      .then(response => response.json()) // JSON 데이터를 js 객체로 변환
-      .then(data => {
-          let translatedText = data.translated_text;
-          displayInSidePanel(translatedText, selectedText);
-      })
-      .catch(error => {
-          console.error("Translation failed:", error);
-          displayInSidePanel("번역 중 오류가 발생했습니다.");
-      });
+        sendResponse({ success: true });
+        return true;
+    }
 
-      sendResponse({ success: true });
-      return true;
-  }
-    // 추가된 메시지 리스너: 팝업에서 보낸 메시지 처리
     if (request.action === "displayInSidePanel") {
         const { originalText, translatedText } = request;
-
-        // 사이드 패널 표시 함수 호출
         displayInSidePanel(translatedText, originalText);
-
         sendResponse({ success: true });
     }
 });
 
 // 사이드 패널 생성 및 결과 표시 함수
 function displayInSidePanel(translatedText, originalText) {
-  // 기존 사이드 패널이 있는 경우 제거
-  const existingPanel = document.getElementById("translationSidePanel");
-  if (existingPanel) {
-      existingPanel.remove();
-  }
+    const existingPanel = document.getElementById("translationSidePanel");
+    if (existingPanel) {
+        existingPanel.remove();
+    }
 
-  // 사이드 패널 생성
-  const panel = document.createElement("div");
-  panel.id = "translationSidePanel";
-  panel.style.position = "fixed";
-  panel.style.top = "0";
-  panel.style.right = "0";
-  panel.style.width = "350px";
-  panel.style.height = "100%";
-  panel.style.backgroundColor = "#f9f9f9";
-  panel.style.boxShadow = "-2px 0 5px rgba(0,0,0,0.2)";
-  panel.style.padding = "20px";
-  panel.style.overflowY = "auto";
-  panel.style.zIndex = "10000";
+    const panel = document.createElement("div");
+    panel.id = "translationSidePanel";
+    panel.style.cssText = `
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 350px;
+        height: 100%;
+        background-color: #f9f9f9;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+        padding: 20px;
+        overflow-y: auto;
+        z-index: 10000;
+    `;
 
-    // 제목 추가
+    // 제목 및 부제 생성
     const titleContainer = document.createElement("div");
     titleContainer.className = "six";
     titleContainer.style.textAlign = "center";
@@ -94,166 +90,139 @@ function displayInSidePanel(translatedText, originalText) {
     title.appendChild(subtitle);
     titleContainer.appendChild(title);
 
-  // 원문 표시
-  const originalTitle = document.createElement("h2");
-  originalTitle.textContent = "원문";
-  originalTitle.style.marginBottom = "10px";
+    // 번역 결과 제목, 복사 및 저장 버튼 생성
+    const resultHeaderContainer = document.createElement("div");
+    resultHeaderContainer.style.cssText = `
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    `;
 
-  // 번역 원문 텍스트 추가
-  const originalParagraph = document.createElement("p");
-  originalParagraph.textContent = originalText;
-  originalParagraph.style.whiteSpace = "pre-wrap";
-  originalParagraph.style.marginBottom = "20px";
+    const resultTitle = document.createElement("h2");
+    resultTitle.textContent = "해설";
+    resultTitle.style.marginBottom = "10px";
 
-  // 번역 결과 제목, 복사 버튼, 저장 버튼
-  const titleContainer = document.createElement("div");
-  titleContainer.style.cssText = `
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  `;
+    const copyButton = document.createElement("button");
+    copyButton.textContent = "복사하기";
+    copyButton.style.cssText = `
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    `;
+    copyButton.addEventListener("click", () => {
+        navigator.clipboard.writeText(translatedText).then(() => {
+            alert("번역 결과가 클립보드에 복사되었습니다!");
+        });
+    });
 
-  // 번역 결과 제목 추가
-  const resultTitle = document.createElement("h2");
-  resultTitle.textContent = "해설";
-  resultTitle.style.marginBottom = "10px";
+    const saveButton = document.createElement("button");
+    saveButton.textContent = "저장하기";
+    saveButton.style.cssText = `
+        padding: 5px 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    `;
+    saveButton.addEventListener("click", () => {
+        saveToLocalStorage(originalText, translatedText);
+        alert("번역 원문과 결과가 저장되었습니다!");
+    });
 
-  const copyButton = document.createElement("button");
-  copyButton.textContent = "복사하기";
-  copyButton.style.cssText = `
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  `;
-  copyButton.addEventListener("click", () => {
-      navigator.clipboard.writeText(translatedText).then(() => {
-          alert("번역 결과가 클립보드에 복사되었습니다!");
-      });
-  });
-  //저장하기
-  const saveButton = document.createElement("button");
-  saveButton.textContent = "저장하기";
-  saveButton.style.cssText = `
-    padding: 5px 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  `;
-  saveButton.addEventListener("click", () => {
-      saveToLocalStorage(originalText, translatedText);//로컬 스토리지 저장
-      alert("번역 원문과 결과가 저장되었습니다!");
-      //displaySavedTranslations();//테이블 업데이트(삭제하기)
-  });
+    resultHeaderContainer.appendChild(resultTitle);
+    resultHeaderContainer.appendChild(copyButton);
+    resultHeaderContainer.appendChild(saveButton);
 
-  titleContainer.appendChild(title);
-  titleContainer.appendChild(copyButton);
-  titleContainer.appendChild(saveButton);//저장하기
+    // 번역된 텍스트 표시
+    const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    const result = document.createElement("p");
+    result.innerHTML = formattedText;
+    result.style.whiteSpace = "pre-wrap";
+    result.style.marginBottom = "20px";
 
-  // 번역된 텍스트 표시
-  const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-  const result = document.createElement("p");
-  result.innerHTML = formattedText;
-  result.style.whiteSpace = "pre-wrap";
-  result.style.marginBottom = "20px";
+    // 키워드 목록 생성
+    const keywordList = document.createElement("div");
+    keywordList.style.marginTop = "20px";
 
-  // 키워드 추출
-  const keywords = [...translatedText.matchAll(/\*\*(.*?)\*\*/g)].map(match => match[1]);
+    const keywordTitle = document.createElement("h3");
+    keywordTitle.textContent = "변환된 단어 목록";
+    keywordList.appendChild(keywordTitle);
 
-  // 키워드 목록 생성
-  const keywordList = document.createElement("div");
-  keywordList.style.marginTop = "20px";
+    const keywords = [...translatedText.matchAll(/\*\*(.*?)\*\*/g)].map((match) => match[1]);
+    keywords.forEach((keyword) => {
+        const keywordRow = document.createElement("div");
+        keywordRow.style.display = "flex";
+        keywordRow.style.justifyContent = "space-between";
+        keywordRow.style.marginBottom = "10px";
+        keywordRow.style.alignItems = "center";
 
-  const keywordTitle = document.createElement("h3");
-  keywordTitle.textContent = "변환된 단어 목록";
-  keywordList.appendChild(keywordTitle);
+        const keywordText = document.createElement("span");
+        keywordText.textContent = keyword;
 
-  keywords.forEach(keyword => {
-      const keywordRow = document.createElement("div");
-      keywordRow.style.display = "flex";
-      keywordRow.style.justifyContent = "space-between";
-      keywordRow.style.marginBottom = "10px";
-      keywordRow.style.alignItems = "center";
+        const retranslateButton = document.createElement("button");
+        retranslateButton.textContent = "재번역";
+        retranslateButton.style.padding = "5px 10px";
+        retranslateButton.style.border = "none";
+        retranslateButton.style.borderRadius = "5px";
+        retranslateButton.style.backgroundColor = "#007bff";
+        retranslateButton.style.color = "#fff";
+        retranslateButton.style.cursor = "pointer";
 
-      const keywordText = document.createElement("span");
-      keywordText.textContent = keyword;
+        retranslateButton.addEventListener("click", () => {
+            fetch("http://127.0.0.1:8000/retranslate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ word: keyword }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const retranslatedWord = data.retranslated_word;
+                    displayRetranslation(keywordText, retranslatedWord);
+                })
+                .catch((error) => {
+                    console.error("Retranslation failed:", error);
+                    displayRetranslation(keywordText, "재번역 실패");
+                });
+        });
 
-      const retranslateButton = document.createElement("button");
-      retranslateButton.textContent = "재번역";
-      retranslateButton.style.padding = "5px 10px";
-      retranslateButton.style.border = "none";
-      retranslateButton.style.borderRadius = "5px";
-      retranslateButton.style.backgroundColor = "#007bff";
-      retranslateButton.style.color = "#fff";
-      retranslateButton.style.cursor = "pointer";
+        keywordRow.appendChild(keywordText);
+        keywordRow.appendChild(retranslateButton);
+        keywordList.appendChild(keywordRow);
+    });
 
-      // 재번역 버튼 클릭 이벤트
-      retranslateButton.addEventListener("click", () => {
-          fetch('http://127.0.0.1:8000/retranslate', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ word: keyword })
-          })
-          .then(response => response.json())
-          .then(data => {
-              const retranslatedWord = data.retranslated_word;
-              displayRetranslation(keywordText, retranslatedWord);
-          })
-          .catch(error => {
-              console.error("Retranslation failed:", error);
-              displayRetranslation(keywordText, "재변환 실패");
-          });
-      });
+    // 닫기 버튼 생성
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "닫기";
+    closeButton.style.position = "absolute";
+    closeButton.style.top = "10px";
+    closeButton.style.right = "10px";
+    closeButton.style.padding = "5px 10px";
+    closeButton.style.border = "none";
+    closeButton.style.borderRadius = "5px";
+    closeButton.style.backgroundColor = "#ff5c5c";
+    closeButton.style.color = "#fff";
+    closeButton.style.cursor = "pointer";
 
-      keywordRow.appendChild(keywordText);
-      keywordRow.appendChild(retranslateButton);
-      keywordList.appendChild(keywordRow);
-  });
+    closeButton.addEventListener("click", () => {
+        panel.remove();
+    });
 
-  // 닫기 버튼 추가
-  const closeButton = document.createElement("button");
-  closeButton.textContent = "닫기";
-  closeButton.style.position = "absolute";
-  closeButton.style.top = "10px";
-  closeButton.style.right = "10px";
-  closeButton.style.padding = "5px 10px";
-  closeButton.style.border = "none";
-  closeButton.style.borderRadius = "5px";
-  closeButton.style.backgroundColor = "#ff5c5c";
-  closeButton.style.color = "#fff";
-  closeButton.style.cursor = "pointer";
+    // 패널에 요소 추가
+    panel.appendChild(closeButton);
+    panel.appendChild(titleContainer);
+    panel.appendChild(resultHeaderContainer);
+    panel.appendChild(result);
+    panel.appendChild(keywordList);
 
-  closeButton.addEventListener("click", () => {
-      panel.remove();
-  });
-
-  // 사이드 패널에 요소 추가
-  panel.appendChild(closeButton);
-  panel.appendChild(titleContainer); // 제목 추가
-  panel.appendChild(originalTitle);
-  panel.appendChild(originalParagraph);
-  panel.appendChild(titleContainer);
-  panel.appendChild(result);
-  //panel.appendChild(title);
-
-  panel.appendChild(result);
-  panel.appendChild(keywordList);
-  panel.appendChild(saveButton); //저장버튼
-
-  displaySavedTranslationsInSidePanel(panel);
-
-
-  // 문서에 사이드 패널 추가
-  document.body.appendChild(panel);
-
-
+    document.body.appendChild(panel);
 }
 
 // 재번역 결과 표시 함수
@@ -366,7 +335,7 @@ function displaySavedTranslationsInSidePanel(panel) {
 
 // 초기화: 페이지 로드 시 저장된 번역 UI 표시
 function initialize() {
-  displaySavedTranslations();
+    displaySavedTranslationsInSidePanel();
 }
 
 // 페이지 로드 시 초기화
