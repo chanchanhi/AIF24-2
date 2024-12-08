@@ -366,7 +366,7 @@ function displaySavedTranslationsInSidePanel(panel) {
 
 // 초기화: 페이지 로드 시 저장된 번역 UI 표시
 function initialize() {
-  displaySavedTranslations();
+  displaySavedTranslationsInSidePanel();
 }
 
 // 페이지 로드 시 초기화
