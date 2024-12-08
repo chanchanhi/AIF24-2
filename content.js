@@ -118,7 +118,7 @@ function displayInSidePanel(translatedText, originalText) {
 
   // 원문 표시
   const originalTitle = document.createElement("h2");
-  originalTitle.textContent = "번역 원문";
+  originalTitle.textContent = "선택된 원문";
   originalTitle.style.marginBottom = "10px";
 
   // 번역 원문 텍스트 추가
@@ -138,7 +138,7 @@ function displayInSidePanel(translatedText, originalText) {
 
   // 번역 결과 제목 추가
   const title = document.createElement("h2");
-  title.textContent = "번역 결과";
+  title.textContent = "해설 결과";
   title.style.marginBottom = "10px";
 
   const copyButton = document.createElement("button");
@@ -169,7 +169,7 @@ function displayInSidePanel(translatedText, originalText) {
   `;
   saveButton.addEventListener("click", () => {
       saveToLocalStorage(originalText, translatedText);//로컬 스토리지 저장
-      alert("번역 원문과 결과가 저장되었습니다!");
+      alert("선택된 원문과 해설결과가 저장되었습니다!");
       //displaySavedTranslations();//테이블 업데이트(삭제하기)
   });
 
@@ -193,7 +193,7 @@ function displayInSidePanel(translatedText, originalText) {
   keywordList.style.marginTop = "20px";
 
   const keywordTitle = document.createElement("h3");
-  keywordTitle.textContent = "번역된 단어 목록";
+  keywordTitle.textContent = "단어 목록";
   keywordList.appendChild(keywordTitle);
 
   keywords.forEach(keyword => {
@@ -207,7 +207,7 @@ function displayInSidePanel(translatedText, originalText) {
       keywordText.textContent = keyword;
 
       const retranslateButton = document.createElement("button");
-      retranslateButton.textContent = "재번역";
+      retranslateButton.textContent = "재해설";
       retranslateButton.style.padding = "5px 10px";
       retranslateButton.style.border = "none";
       retranslateButton.style.borderRadius = "5px";
@@ -307,7 +307,7 @@ function displaySavedTranslationsInSidePanel(panel) {
   savedTranslationsSection.style.marginTop = "20px";
 
   const title = document.createElement("h3");
-  title.textContent = "저장된 번역 관리";
+  title.textContent = "저장된 해설 관리";
   savedTranslationsSection.appendChild(title);
 
   // 저장된 번역 데이터를 테이블 형식으로 표시
@@ -326,7 +326,7 @@ function displaySavedTranslationsInSidePanel(panel) {
       `;
 
       const headerRow = document.createElement("tr");
-      ["번역 원문", "번역 결과"].forEach(headerText => {
+      ["선택된 원문", "해설 결과"].forEach(headerText => {
           const th = document.createElement("th");
           th.textContent = headerText;
           th.style.cssText = `
