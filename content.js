@@ -223,6 +223,7 @@ function displayInSidePanel(translatedText, originalText) {
     panel.appendChild(keywordList);
 
     document.body.appendChild(panel);
+
 }
 
 // 재번역 결과 표시 함수
