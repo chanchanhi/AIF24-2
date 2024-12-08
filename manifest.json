@@ -1,6 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Translate Plugin",
+  "name": "ExplainEasy",
+  "description": "세대 간 소통 및 문해력 향상을 위한 GPT 기반 신조어, 한자어 표현 번역기",
   "version": "1.0",
   "permissions": ["activeTab", "contextMenus", "scripting"],
   "background": {
