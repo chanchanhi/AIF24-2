@@ -34,13 +34,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
     // 추가된 메시지 리스너: 팝업에서 보낸 메시지 처리
     if (request.action === "displayInSidePanel") {
-    const { originalText, translatedText } = request;
+        const { originalText, translatedText } = request;
 
-    // 사이드 패널 표시 함수 호출
-    displayInSidePanel(translatedText, originalText);
+        // 사이드 패널 표시 함수 호출
+        displayInSidePanel(translatedText, originalText);
 
-    sendResponse({ success: true });
-    return true;
+        sendResponse({ success: true });
     }
 });
 
@@ -97,7 +96,7 @@ function displayInSidePanel(translatedText, originalText) {
 
   // 원문 표시
   const originalTitle = document.createElement("h2");
-  originalTitle.textContent = "번역 원문";
+  originalTitle.textContent = "원문";
   originalTitle.style.marginBottom = "10px";
 
   // 번역 원문 텍스트 추가
@@ -108,7 +107,7 @@ function displayInSidePanel(translatedText, originalText) {
 
   // 번역 결과 제목 추가
   const resultTitle = document.createElement("h2");
-  resultTitle.textContent = "번역 결과";
+  resultTitle.textContent = "해설";
   resultTitle.style.marginBottom = "10px";
 
   // 번역된 텍스트 표시
@@ -125,7 +124,7 @@ function displayInSidePanel(translatedText, originalText) {
   keywordList.style.marginTop = "20px";
 
   const keywordTitle = document.createElement("h3");
-  keywordTitle.textContent = "번역된 단어 목록";
+  keywordTitle.textContent = "변환된 단어 목록";
   keywordList.appendChild(keywordTitle);
 
   keywords.forEach(keyword => {
@@ -163,7 +162,7 @@ function displayInSidePanel(translatedText, originalText) {
           })
           .catch(error => {
               console.error("Retranslation failed:", error);
-              displayRetranslation(keywordText, "재번역 실패");
+              displayRetranslation(keywordText, "재변환 실패");
           });
       });
 
