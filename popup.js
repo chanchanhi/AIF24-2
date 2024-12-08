@@ -3,7 +3,7 @@ document.getElementById("explainButton").addEventListener("click", () => {
 
     // 입력값 확인
     if (!inputText.trim()) {
-        alert("번역할 텍스트를 입력하세요.");
+        alert("변환할 텍스트를 입력하세요.");
         return;
     }
 
@@ -25,6 +25,11 @@ document.getElementById("explainButton").addEventListener("click", () => {
                 action: "displayInSidePanel",
                 originalText: inputText,
                 translatedText: translatedText
+            }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error("Failed to send message:", chrome.runtime.lastError.message);
+                    alert("번역 결과를 표시할 수 없습니다. content.js가 활성화되지 않았을 수 있습니다.");
+                }
             });
         });
     })
@@ -37,6 +42,11 @@ document.getElementById("explainButton").addEventListener("click", () => {
                 action: "displayInSidePanel",
                 originalText: inputText,
                 translatedText: "번역 중 오류가 발생했습니다."
+            }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error("Failed to send error message:", chrome.runtime.lastError.message);
+                    alert("오류 메시지를 표시할 수 없습니다.");
+                }
             });
         });
     });

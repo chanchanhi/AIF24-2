@@ -7,68 +7,67 @@
     body {
       background: #e0e5ec;
       font-family: Arial, sans-serif;
-      margin: 20px;
-      padding: 10px;
-      line-height: 1.6;
-      word-wrap: break-word;
-      white-space: normal;
-      overflow-wrap: break-word;
+      margin: 0;
+      padding: 20px;
+      width: 320px; /* 팝업 너비 */
+      height: 400px; /* 팝업 높이 */
+      overflow: hidden; /* 스크롤 방지 */
       text-align: center;
     }
 
     .six h1 {
       text-align: center;
-      color: #222;
+      color: #c50000;
       font-size: 30px;
       font-weight: 400;
-      text-transform: uppercase;
       word-spacing: 1px;
       letter-spacing: 2px;
-      color: #c50000;
-      position: relative; /* :before, :after 위치 조정용 */
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      position: relative; /* 가로줄 위치를 위해 필요 */
     }
 
     .six h1 span {
-      line-height: 2em;
-      padding-bottom: 15px;
-      text-transform: none;
+      line-height: 1.5em;
       font-size: 0.6em;
       font-weight: normal;
       font-style: italic;
-      font-family: Arial, sans-serif;
       color: #999;
-      white-space: nowrap; /* 줄바꿈 방지 */
-      letter-spacing: -0.005em;
-      word-spacing: 1px;
       display: block;
+      margin: 0 auto; /* 수평 및 수직 중앙 정렬 */
+      text-align: center; /* 텍스트 중앙 정렬 */
+      white-space: nowrap; /* 줄바꿈 방지 */
     }
 
-    .six h1:after, .six h1:before {
-      position: absolute;
-      left: 0;
-      bottom: -10px; /* 라인의 위치 조정 */
-      width: 45px;
-      height: 4px;
+    /* 가로줄 스타일 */
+    .six h1::before,
+    .six h1::after {
       content: "";
-      background-color: #ccc;
-      right: 45px;
-      margin: auto;
+      position: absolute;
+      width: 40%; /* 가로줄 길이 */
+      height: 2px; /* 가로줄 두께 */
+      background: #ccc;
+      bottom: -5px; /* 제목 아래에 위치 */
     }
 
-    .six h1:before {
-      background-color: #d78b8b;
-      left: 45px;
-      width: 90px;
+    .six h1::before {
+      left: 15%; /* 왼쪽에서 위치 조정 */
+      background: #d78b8b; /* 왼쪽 가로줄 색상 */
     }
 
-    input[type="text"] {
-      width: 80%;
-      padding: 10px;
+    .six h1::after {
+      right: 15%; /* 오른쪽에서 위치 조정 */
+    }
+
+    textarea {
+      width: 90%;
+      height: 200px;
+      margin-top: 20px;
       margin-bottom: 20px;
+      padding: 10px;
       border: 2px solid #ddd;
       border-radius: 5px;
       font-size: 16px;
+      resize: none;
     }
 
     .btn-6 {
@@ -110,7 +109,7 @@
   </div>
 
   <!-- 텍스트 입력 필드 -->
-  <input type="text" id="textInput" placeholder="번역할 텍스트를 입력하세요">
+  <textarea id="textInput" placeholder="번역할 텍스트를 입력하세요"></textarea>
 
   <!-- 해설 보기 버튼 -->
   <button class="btn-6" id="explainButton">
