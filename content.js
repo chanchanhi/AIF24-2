@@ -52,7 +52,7 @@ function displayInSidePanel(translatedText, originalText) {
         position: fixed;
         top: 0;
         right: 0;
-        width: 350px;
+        width: 400px;
         height: 100%;
         background-color: #f9f9f9;
         box-shadow: -2px 0 5px rgba(0,0,0,0.2);
@@ -89,6 +89,21 @@ function displayInSidePanel(translatedText, originalText) {
 
     title.appendChild(subtitle);
     titleContainer.appendChild(title);
+
+    // 원문 표시
+    const originalTitle = document.createElement("h3");
+    originalTitle.textContent = "번역 원문";
+    originalTitle.style.marginBottom = "10px";
+
+    const originalTextParagraph = document.createElement("p");
+    originalTextParagraph.textContent = originalText;
+    originalTextParagraph.style.cssText = `
+        white-space: pre-wrap;
+        background-color: #f1f1f1;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    `;
 
     // 번역 결과 제목, 복사 및 저장 버튼 생성
     const resultHeaderContainer = document.createElement("div");
@@ -132,6 +147,8 @@ function displayInSidePanel(translatedText, originalText) {
     `;
     saveButton.addEventListener("click", () => {
         saveToLocalStorage(originalText, translatedText);
+        // 테이블 즉시 업데이트
+        displaySavedTranslationsInSidePanel(panel);
         alert("번역 원문과 결과가 저장되었습니다!");
     });
 
@@ -218,6 +235,8 @@ function displayInSidePanel(translatedText, originalText) {
     // 패널에 요소 추가
     panel.appendChild(closeButton);
     panel.appendChild(titleContainer);
+    panel.appendChild(originalTitle);
+    panel.appendChild(originalTextParagraph);
     panel.appendChild(resultHeaderContainer);
     panel.appendChild(result);
     panel.appendChild(keywordList);
@@ -324,6 +343,9 @@ function displaySavedTranslationsInSidePanel(panel) {
             originalCell.style.cssText = `
                 padding: 5px;
                 border: 1px solid #ddd;
+                white-space: nowrap; /* 줄바꿈 방지 */
+                overflow: hidden;
+                text-overflow: ellipsis;
             `;
 
             const translatedCell = document.createElement("td");
@@ -331,6 +353,9 @@ function displaySavedTranslationsInSidePanel(panel) {
             translatedCell.style.cssText = `
                 padding: 5px;
                 border: 1px solid #ddd;
+                white-space: nowrap; /* 줄바꿈 방지 */
+                overflow: hidden;
+                text-overflow: ellipsis;
             `;
 
             const deleteCell = document.createElement("td");
@@ -338,6 +363,7 @@ function displaySavedTranslationsInSidePanel(panel) {
                 padding: 5px;
                 border: 1px solid #ddd;
                 text-align: center;
+                white-space: nowrap; /* 줄바꿈 방지 */
             `;
 
             const deleteButton = document.createElement("button");
