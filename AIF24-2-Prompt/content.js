@@ -222,6 +222,9 @@ function displayInSidePanel(translatedText, originalText) {
     panel.appendChild(result);
     panel.appendChild(keywordList);
 
+    // 저장된 번역 데이터 추가
+    displaySavedTranslationsInSidePanel(panel);
+
     document.body.appendChild(panel);
 }
 
@@ -292,50 +295,94 @@ function displaySavedTranslationsInSidePanel(panel) {
       `;
 
       const headerRow = document.createElement("tr");
-      ["번역 원문", "번역 결과"].forEach(headerText => {
-          const th = document.createElement("th");
-          th.textContent = headerText;
-          th.style.cssText = `
-              padding: 5px;
-              border: 1px solid #ddd;
-              background-color: #f1f1f1;
-          `;
-          headerRow.appendChild(th);
-      });
-      table.appendChild(headerRow);
+        ["번역 원문", "번역 결과", "삭제"].forEach((headerText) => {
+            const th = document.createElement("th");
+            th.textContent = headerText;
+            th.style.cssText = `
+                padding: 5px;
+                border: 1px solid #ddd;
+                background-color: #f1f1f1;
+            `;
+            headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
 
-      Object.entries(storedTranslations).forEach(([originalText, translatedText]) => {
-          const row = document.createElement("tr");
+        Object.entries(storedTranslations).forEach(([originalText, translatedText]) => {
+            const row = document.createElement("tr");
 
-          const originalCell = document.createElement("td");
-          originalCell.textContent = originalText;
-          originalCell.style.cssText = `
-              padding: 5px;
-              border: 1px solid #ddd;
-          `;
+            const originalCell = document.createElement("td");
+            originalCell.textContent = originalText;
+            originalCell.style.cssText = `
+                padding: 5px;
+                border: 1px solid #ddd;
+            `;
 
-          const translatedCell = document.createElement("td");
-          translatedCell.textContent = translatedText;
-          translatedCell.style.cssText = `
-              padding: 5px;
-              border: 1px solid #ddd;
-          `;
+            const translatedCell = document.createElement("td");
+            translatedCell.textContent = translatedText;
+            translatedCell.style.cssText = `
+                padding: 5px;
+                border: 1px solid #ddd;
+            `;
 
-          row.appendChild(originalCell);
-          row.appendChild(translatedCell);
-          table.appendChild(row);
-      });
+            const deleteCell = document.createElement("td");
+            deleteCell.style.cssText = `
+                padding: 5px;
+                border: 1px solid #ddd;
+                text-align: center;
+            `;
 
-      savedTranslationsSection.appendChild(table);
-  }
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "삭제";
+            deleteButton.style.cssText = `
+                padding: 5px 10px;
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            `;
+            deleteButton.addEventListener("click", () => {
+                deleteFromLocalStorage(originalText);
+                displaySavedTranslationsInSidePanel(panel); // 삭제 후 업데이트
+            });
 
-  // 기존 패널에 추가
-  panel.appendChild(savedTranslationsSection);
+            deleteCell.appendChild(deleteButton);
+
+            row.appendChild(originalCell);
+            row.appendChild(translatedCell);
+            row.appendChild(deleteCell);
+
+            table.appendChild(row);
+        });
+
+        savedTranslationsSection.appendChild(table);
+    }
+
+    panel.appendChild(savedTranslationsSection);
+}
+
+// 번역 패널 생성
+function createTranslationPanel() {
+  const panel = document.createElement("div");
+  panel.id = "translationSidePanel";
+  panel.style.cssText = `
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 350px;
+      height: 100%;
+      background-color: #f9f9f9;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+      padding: 20px;
+      overflow-y: auto;
+      z-index: 10000;
+  `;
+  return panel;
 }
 
 // 초기화: 페이지 로드 시 저장된 번역 UI 표시
 function initialize() {
-    displaySavedTranslationsInSidePanel();
+    displaySavedTranslations();
 }
 
 // 페이지 로드 시 초기화
