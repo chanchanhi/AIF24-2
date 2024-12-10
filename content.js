@@ -403,7 +403,7 @@ panel.id = "translationSidePanel";
 panel.style.cssText = `
     position: fixed;
     top: 0;
-    right: 0;
+    right: -350px;
     width: 350px;
     height: 100%;
     background-color: #f9f9f9;
@@ -418,8 +418,8 @@ return panel;
 // 초기화: 페이지 로드 시 저장된 번역 UI 표시
 function initialize() {
 const panel = createTranslationPanel();
-displaySavedTranslationsInSidePanel(panel);
 document.body.appendChild(panel);
+//displaySavedTranslationsInSidePanel(panel);
 }
 
 // 페이지 로드 시 초기화
