@@ -415,7 +415,7 @@ panel.style.cssText = `
 return panel;
 }
 
-// 초기화: 페이지 로드 시 저장된 번역 UI 표시
+// 초기화: 페이지 로드 시 저장된 번역 UI 표시(사이드바 수정)
 function initialize() {
 const panel = createTranslationPanel();
 document.body.appendChild(panel);
