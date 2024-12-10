@@ -320,6 +320,7 @@ if (Object.keys(storedTranslations).length === 0) {
         width: 100%;
         border-collapse: collapse;
         margin-top: 10px;
+        table-layout: fixed; /* 고정된 열 너비 */
     `;
 
     const headerRow = document.createElement("tr");
@@ -330,6 +331,8 @@ if (Object.keys(storedTranslations).length === 0) {
               padding: 5px;
               border: 1px solid #ddd;
               background-color: #f1f1f1;
+              text-align: center;
+              word-wrap: break-word; /* 긴 텍스트 줄바꿈 */
           `;
           headerRow.appendChild(th);
       });
@@ -343,7 +346,7 @@ if (Object.keys(storedTranslations).length === 0) {
           originalCell.style.cssText = `
               padding: 5px;
               border: 1px solid #ddd;
-              white-space: nowrap; /* 줄바꿈 방지 */
+              word-wrap: break-word; /* 긴 텍스트 줄바꿈 */
               overflow: hidden;
               text-overflow: ellipsis;
           `;
@@ -353,7 +356,7 @@ if (Object.keys(storedTranslations).length === 0) {
           translatedCell.style.cssText = `
               padding: 5px;
               border: 1px solid #ddd;
-              white-space: nowrap; /* 줄바꿈 방지 */
+              word-wrap: break-word; /* 긴 텍스트 줄바꿈 */
               overflow: hidden;
               text-overflow: ellipsis;
           `;
@@ -363,7 +366,6 @@ if (Object.keys(storedTranslations).length === 0) {
               padding: 5px;
               border: 1px solid #ddd;
               text-align: center;
-              white-space: nowrap; /* 줄바꿈 방지 */
           `;
 
           const deleteButton = document.createElement("button");
