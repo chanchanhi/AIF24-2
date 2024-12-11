@@ -70,7 +70,7 @@ function displayInSidePanel(translatedText, originalText) {
   const title = document.createElement("h1");
   title.style.color = "#c50000";
   title.style.fontSize = "24px";
-  title.style.textTransform = "uppercase";
+  //title.style.textTransform = "uppercase";
   title.style.wordSpacing = "1px";
   title.style.letterSpacing = "2px";
   title.style.position = "relative";
@@ -92,7 +92,7 @@ function displayInSidePanel(translatedText, originalText) {
 
   // 원문 표시
   const originalTitle = document.createElement("h3");
-  originalTitle.textContent = "번역 원문";
+  originalTitle.textContent = "드래그한 원문";
   originalTitle.style.marginBottom = "10px";
 
   const originalTextParagraph = document.createElement("p");
@@ -149,7 +149,7 @@ function displayInSidePanel(translatedText, originalText) {
       saveToLocalStorage(originalText, translatedText);
       // 테이블 즉시 업데이트
       displaySavedTranslationsInSidePanel(panel);
-      alert("번역 원문과 결과가 저장되었습니다!");
+      alert("드래그한 원문과 결과가 저장되었습니다!");
   });
 
   resultHeaderContainer.appendChild(resultTitle);
@@ -183,7 +183,7 @@ function displayInSidePanel(translatedText, originalText) {
       keywordText.textContent = keyword;
 
       const retranslateButton = document.createElement("button");
-      retranslateButton.textContent = "재번역";
+      retranslateButton.textContent = "재해설";
       retranslateButton.style.padding = "5px 10px";
       retranslateButton.style.border = "none";
       retranslateButton.style.borderRadius = "5px";
@@ -206,7 +206,7 @@ function displayInSidePanel(translatedText, originalText) {
               })
               .catch((error) => {
                   console.error("Retranslation failed:", error);
-                  displayRetranslation(keywordText, "재번역 실패");
+                  displayRetranslation(keywordText, "재해설 실패");
               });
       });
 
@@ -276,8 +276,12 @@ parentElement.parentElement.insertBefore(retranslationResult, parentElement.next
 
 // 로컬 스토리지에 번역 데이터 저장
 function saveToLocalStorage(originalText, translatedText) {
+// **을 <strong> 태그로 변환
+const formattedText = translatedText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+// 로컬 스토리지에 저장
 const storedTranslations = JSON.parse(localStorage.getItem("translations")) || {};
-storedTranslations[originalText] = translatedText;
+storedTranslations[originalText] = formattedText; // 변환된 텍스트 저장
 localStorage.setItem("translations", JSON.stringify(storedTranslations));
 }
 
@@ -304,14 +308,14 @@ savedTranslationsSection.id = "savedTranslationsSection";
 savedTranslationsSection.style.marginTop = "20px";
 
 const title = document.createElement("h3");
-title.textContent = "저장된 번역 관리";
+title.textContent = "저장된 표현 관리";
 savedTranslationsSection.appendChild(title);
 
 // 저장된 번역 데이터를 테이블 형식으로 표시
 const storedTranslations = JSON.parse(localStorage.getItem("translations")) || {};
 if (Object.keys(storedTranslations).length === 0) {
     const noDataMessage = document.createElement("p");
-    noDataMessage.textContent = "저장된 번역이 없습니다.";
+    noDataMessage.textContent = "저장된 해설이 없습니다.";
     noDataMessage.style.color = "#666";
     savedTranslationsSection.appendChild(noDataMessage);
 } else {
@@ -324,7 +328,7 @@ if (Object.keys(storedTranslations).length === 0) {
     `;
 
     const headerRow = document.createElement("tr");
-      ["번역 원문", "번역 결과", "삭제"].forEach((headerText) => {
+      ["원문", "해설", "삭제"].forEach((headerText) => {
           const th = document.createElement("th");
           th.textContent = headerText;
           th.style.cssText = `
@@ -352,7 +356,7 @@ if (Object.keys(storedTranslations).length === 0) {
           `;
 
           const translatedCell = document.createElement("td");
-          translatedCell.textContent = translatedText;
+          translatedCell.innerHTML = translatedText;
           translatedCell.style.cssText = `
               padding: 5px;
               border: 1px solid #ddd;
