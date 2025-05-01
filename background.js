@@ -2,7 +2,7 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: 'translateText',
-    title: '번역하기',
+    title: '해설 보기',
     contexts: ['selection'], // 텍스트를 선택한 경우에만 표시
   });
 });
